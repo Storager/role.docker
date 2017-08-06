@@ -1,0 +1,35 @@
+---
+- name: create service data directory
+  file:
+    path: "/opt/docker_data"
+    group: docker
+    mode: 775
+    state: directory
+
+- name: db container
+  docker:
+    name: db
+    image: mysql:5.7
+    restart_policy: always
+    env:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: redmine
+    volumes:
+      - /opt/docker_data/db:/etc/lib/mysql  
+
+- name: redmine container
+  docker:
+    name: redmine
+    image: redmine:3.4.2
+    ports:
+      - 80:3000
+    env:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_PASSWORD: example
+    links:
+      - db
+    restart_policy: always
+    volumes:
+      - "/opt/docker_data/redmine_files:/usr/src/redmine/files"
+      - "/opt/docker_data/redmine_plugins:/usr/src/redmine/plugins"
+...
