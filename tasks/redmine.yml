@@ -1,11 +1,4 @@
 ---
-- name: create service data directory
-  file:
-    path: "/opt/docker_data"
-    group: docker
-    mode: 775
-    state: directory
-
 - name: db container
   docker:
     name: db

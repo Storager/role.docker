@@ -37,6 +37,14 @@
   pip:
     name: docker-py
     version: 1.1.0
+    
+- name: create service data directory
+  file:
+    path: "/opt/docker_data"
+    group: docker
+    mode: 775
+    state: directory
+
 
 - include: "redmine.yml"
     
