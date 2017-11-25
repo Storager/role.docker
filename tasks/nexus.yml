@@ -1,0 +1,21 @@
+---
+- name: create specific directory for Nexus
+  file:
+    path: "{{docker_volume}}/nexus_work"
+    owner: 200
+    state: directory
+
+- name: nexus container
+  docker:
+    name: nexus
+    image: sonatype/nexus:2.14.5
+    restart_policy: always
+    links:
+      - gitlab-server
+    # ports:
+    #   - 8081:8081
+    volumes:
+      - "{{docker_volume}}/nexus_work:/sonatype-work"
+  tags:
+    - gitlab
+...
