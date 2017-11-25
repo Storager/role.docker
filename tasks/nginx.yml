@@ -1,0 +1,53 @@
+---
+# - name: create specific directory for Nexus
+#   file:
+#     path: "{{docker_volume}}/nexus_work"
+#     owner: 200
+
+- name: Create nginx container
+  docker:
+    name: nginx
+    hostname: nginx
+    image: nginx
+    restart_policy: always
+    links:
+      - gitlab-server
+      - nexus
+    ports:
+      - 80:80
+    volumes:
+      - "{{docker_volume}}/nginx_confd:/etc/nginx/conf.d"
+      - "{{docker_volume}}/nginx_www:/var/www"
+  tags:
+    - nginx
+
+- name: Copy nginx config
+  template:
+    src: nginx-nexus.conf.j2
+    dest: "{{docker_volume}}/nginx_confd/nginx-nexus.conf"
+  tags:
+    - nginx
+
+- name: Create folder for nginx
+  file:
+    path: /var/www
+    state: directory
+  tags:
+    - nginx
+
+- name: Copy files to the directory
+  copy:
+    src: "{{item}}"
+    dest: "{{docker_volume}}/nginx_www/{{item}}"
+  with_items:
+    - "index.html"
+    - "Gitlab.jpg"
+    - "Nexus-Logo.jpg"
+  tags:
+    - nginx
+
+- name: Restart NGINX
+  shell: "docker restart nginx"
+  tags:
+    - nginx
+...
