@@ -1,2 +1,5 @@
 ---
 # defaults file for role.docker
+docker_compose_version: "1.17.0"
+docker_volume: "/opt/docker_data"
+gitlab_url: "http://gitlab.exam.ple/"
