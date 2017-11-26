@@ -8,7 +8,7 @@
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: redmine
     volumes:
-      - /opt/docker_data/db:/etc/lib/mysql  
+      - /opt/docker_data/db:/etc/lib/mysql
 
 - name: redmine container
   docker:
