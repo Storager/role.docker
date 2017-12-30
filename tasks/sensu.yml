@@ -1,0 +1,96 @@
+---
+- name: redis container
+  docker:
+    name: redis
+    image: redis:3
+    hostname: redis
+    restart_policy: always
+    expose:
+      - "6379"
+    ports:
+      - "127.0.0.1:6379:6379"
+    net: "{{ docker_network }}"
+
+- name: sensu api container
+  docker:
+    name: api
+    image: sstarcher/sensu:1.0.0
+    command: api
+    hostname: api
+    restart_policy: always
+    net: "{{ docker_network }}"
+    expose:
+      - "4567"
+    env:
+      TRANSPORT_NAME: redis
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      CHECK_DIR: "/etc/sensu/check.d"
+    volumes:
+      - "{{docker_volume}}/sensu_checks:/etc/sensu/check.d"
+
+- name: sensu server container
+  docker:
+    name: server
+    image: sstarcher/sensu:1.0.0
+    command: server
+    hostname: server
+    restart_policy: always
+    net: "{{ docker_network }}"
+    env:
+      TRANSPORT_NAME: redis
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      CHECK_DIR: "/etc/sensu/check.d"
+    volumes:
+      - "{{docker_volume}}/sensu_checks:/etc/sensu/check.d"
+
+- name: sensu client container
+  docker:
+    name: client
+    image: sstarcher/sensu:1.0.0
+    command: client
+    hostname: client
+    restart_policy: always
+    net: "{{ docker_network }}"
+    env:
+      TRANSPORT_NAME: "redis"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      CLIENT_SUBSCRIPTIONS: "default"
+      CLIENT_BIND: "127.0.0.1"
+      CLIENT_DEREGISTER: "true"
+      CLIENT_NAME: "sensu-client"
+      CLIENT_ADDRESS: "client"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+- name: uchiwa container
+  docker:
+    name: uchiwa
+    image: sstarcher/uchiwa:0.25.2
+    hostname: uchiwa
+    restart_policy: always
+    net: "{{ docker_network }}"
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    env:
+      UCHIWA_BIND: "0.0.0.0"
+      UCHIWA_SERVICE_PORT: "3000"
+      UCHIWA_REFRESH: "10"
+      UCHIWA_LOG_LEVEL: "info"
+      SENSU_DC_NAME: DC1
+      SENSU_HOSTNAME: api
+      SENSU_SERVICE_PORT: "4567"
+
+- name: copy files
+  template:
+    src: "sensu-HTTP-check.json.j2"
+    dest: "{{docker_volume}}/sensu_checks/grid-HTTP-check.json"
+  notify: "restart dockers"
+
+- name: install sensu check
+  shell: "docker exec client apt update && docker exec client apt install -y build-essential && docker exec client sensu-install -p http"
+...

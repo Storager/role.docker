@@ -1,0 +1,24 @@
+{% raw %}{
+    "checks": {
+        "check_HTTP_selenium-hub": {
+            "command": "check-http.rb -u http://selenium-hub:4444",
+            "handlers": [
+                "default"
+            ],
+            "subscribers": [
+                "default"
+            ],
+            "interval": 60
+        }{% endraw %}{% for id in range(1,selenium_capacity + 1) %},
+        "check_HTTP_node-{{selenium_browser}}_{{id}}": {
+            "command": "check-http.rb -u http://node-{{selenium_browser}}_{{id}}:5555",
+            "handlers": [
+                "default"
+            ],
+            "subscribers": [
+                "default"
+            ],
+            "interval": 60
+        }{% endfor %}
+    }
+}

@@ -1,0 +1,19 @@
+---
+- name: cadvisor container
+  docker:
+    name: cadvisor
+    image: google/cadvisor:latest
+    hostname: cadvisor
+    restart_policy: always
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    net: "{{ docker_network }}"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+...
