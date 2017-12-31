@@ -3,6 +3,7 @@ Role Name
 
 Role installs docker engine to Ubuntu host
 
+![Image of Yaktocat](https://travis-ci.org/Storager/role.docker.svg?branch=master)
 
 Role Variables
 --------------
