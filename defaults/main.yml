@@ -6,4 +6,4 @@ gitlab_url: "http://gitlab.exam.ple/"
 docker_network: ansible
 selenium_browser: firefox
 selenium_version: "3.5.3-boron"
-selenium_capacity: "2"
+selenium_capacity: 2
