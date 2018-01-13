@@ -55,6 +55,7 @@
   ignore_errors: yes
 
 - include: "grid.yml"
+  tags: grid
 - include: "sensu.yml"
 - include: "cadvisor.yml"
 ...
