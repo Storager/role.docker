@@ -1,4 +1,13 @@
 ---
+- name: destory previous grid
+  shell: |
+    for i in $(docker ps | grep selenium | awk '{print $1}')
+      do
+        echo "Killing {i}..."
+        docker stop $i
+        docker rm $i
+    done
+
 - name: grid container
   docker:
     name: selenium-hub
