@@ -14,7 +14,7 @@
 - name: sensu api container
   docker:
     name: api
-    image: sstarcher/sensu:1.0.0
+    image: storager/docker-sensu:debian
     command: api
     hostname: api
     restart_policy: always
@@ -32,7 +32,7 @@
 - name: sensu server container
   docker:
     name: server
-    image: sstarcher/sensu:1.0.0
+    image: storager/docker-sensu:debian
     command: server
     hostname: server
     restart_policy: always
@@ -48,7 +48,7 @@
 - name: sensu client container
   docker:
     name: client
-    image: sstarcher/sensu:1.0.0
+    image: storager/docker-sensu:debian
     command: client
     hostname: client
     restart_policy: always
@@ -91,6 +91,6 @@
     dest: "{{docker_volume}}/sensu_checks/grid-HTTP-check.json"
   notify: "restart dockers"
 
-- name: install sensu check
-  shell: "docker exec client apt update && docker exec client apt install -y build-essential && docker exec client sensu-install -p http"
+#- name: install sensu check
+#  shell: "docker exec client apt-get update && docker exec client apt-get install -y build-essential && docker exec client sensu-install -p http"
 ...
